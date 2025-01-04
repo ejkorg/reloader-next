@@ -1,0 +1,13 @@
+2025-01-03T15:29:22.108Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:31:39.040Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:34:35.586Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:38:38.126Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:39:21.820Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:40:41.511Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:41:07.203Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:44:50.467Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:51:51.357Z [32minfo[39m: File upload attempt: originalname=test.txt, extname=.txt, mimetype=text/plain
+2025-01-03T15:51:51.362Z [31merror[39m: File upload error: Error: File type not allowed!
+2025-01-03T15:54:06.535Z [32minfo[39m: File upload attempt: originalname=test.txt, extname=.txt, mimetype=text/plain
+2025-01-03T15:54:06.545Z [32minfo[39m: Attempting to connect to the Oracle database...
+2025-01-03T15:54:06.664Z [31merror[39m: Error processing IDs: NJS-101: no credentials specified
