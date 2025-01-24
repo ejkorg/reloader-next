@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Container, TextField, Box, Select, MenuItem, FormControl, InputLabel, Button, Typography, Modal } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Datetime from 'react-datetime';
+import "react-datetime/css/react-datetime.css";
 
 // Define types directly in this file
 interface TesterType {
@@ -132,631 +131,198 @@ const Home = () => {
   };
 
   return (
-    <Container>
-      <Box component="form" onSubmit={handleSubmit}>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="location-label">Location</InputLabel>
-          <Select
-            labelId="location-label"
+    <div className="container mx-auto p-4">
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
+          <select
+            id="location"
             value={location}
             onChange={handleLocationChange}
-            displayEmpty
-            label="Location"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           >
-            <MenuItem value="" disabled>
-              <em>Select a Location</em>
-            </MenuItem>
+            <option value="" disabled>Select a Location</option>
             {config && Object.keys(config).map((loc) => (
-              <MenuItem key={loc} value={loc}>
+              <option key={loc} value={loc}>
                 {loc}
-              </MenuItem>
+              </option>
             ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="data-type-label">Data Type</InputLabel>
-          <Select
-            labelId="data-type-label"
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="hostname" className="block text-sm font-medium text-gray-700">Hostname</label>
+          <input
+            type="text"
+            id="hostname"
+            value={hostname}
+            readOnly
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="port" className="block text-sm font-medium text-gray-700">Port</label>
+          <input
+            type="text"
+            id="port"
+            value={port}
+            readOnly
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="serviceName" className="block text-sm font-medium text-gray-700">Service Name</label>
+          <input
+            type="text"
+            id="serviceName"
+            value={serviceName}
+            readOnly
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="dataType" className="block text-sm font-medium text-gray-700">Data Type</label>
+          <select
+            id="dataType"
             value={dataType}
             onChange={handleDataTypeChange}
-            displayEmpty
-            label="Data Type"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             disabled={!location}
           >
-            <MenuItem value="" disabled>
-              <em>Select a Data Type</em>
-            </MenuItem>
+            <option value="" disabled>Select a Data Type</option>
             {location && config[location]?.dataType?.map((dt) => {
               const dataTypeKey = Object.keys(dt)[0];
               return (
-                <MenuItem key={dataTypeKey} value={dataTypeKey}>
+                <option key={dataTypeKey} value={dataTypeKey}>
                   {dataTypeKey}
-                </MenuItem>
+                </option>
               );
             })}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth sx={{ mb: 2 }}>
-          <InputLabel id="tester-type-label">Tester Type</InputLabel>
-          <Select
-            labelId="tester-type-label"
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="testerType" className="block text-sm font-medium text-gray-700">Tester Type</label>
+          <select
+            id="testerType"
             value={testerType}
             onChange={(e) => setTesterType(e.target.value as string)}
-            displayEmpty
-            label="Tester Type"
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             disabled={!dataType || !location}
           >
-            <MenuItem value="" disabled>
-              <em>Select a Tester Type</em>
-            </MenuItem>
+            <option value="" disabled>Select a Tester Type</option>
             {location && dataType && config[location]?.dataType?.find((dt) => Object.keys(dt)[0] === dataType)?.[dataType]?.testerType?.map((testerTypeObj) => {
               const testerTypeKey = Object.keys(testerTypeObj)[0];
               return (
-                <MenuItem key={testerTypeKey} value={testerTypeKey}>
+                <option key={testerTypeKey} value={testerTypeKey}>
                   {testerTypeKey}
-                </MenuItem>
+                </option>
               );
             })}
-          </Select>
-        </FormControl>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DatePicker
-            label="Start Date"
-            value={startDate}
-            onChange={(newValue) => {
-              setStartDate(newValue);
-              if (newValue) setFile(null);
-            }}
-            renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 2 }} />}
-            disabled={!!file}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label htmlFor="batchSize" className="block text-sm font-medium text-gray-700">Batch Size</label>
+          <input
+            type="text"
+            id="batchSize"
+            value={batchSize}
+            onChange={(e) => setBatchSize(e.target.value)}
+            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
           />
-          <DatePicker
-            label="End Date"
-            value={endDate}
-            onChange={(newValue) => {
-              setEndDate(newValue);
-              if (newValue) setFile(null);
-            }}
-            renderInput={(params) => <TextField {...params} fullWidth sx={{ mb: 2 }} />}
-            disabled={!!file}
-          />
-        </LocalizationProvider>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          style={{ marginBottom: '16px' }}
-          disabled={!!startDate || !!endDate}
-        />
-        <Button
-          variant="contained"
-          color="primary"
+        </div>
+        <div className="flex space-x-4 mb-4">
+          <div className="w-1/2">
+            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
+            <Datetime
+              value={startDate}
+              onChange={(date) => {
+                setStartDate(date as Date);
+                if (date) setFile(null);
+              }}
+              dateFormat="YYYY-MM-DD"
+              timeFormat="HH:mm:ss"
+              inputProps={{ id: "startDate", className: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" }}
+              closeOnSelect
+              disabled={!!file}
+            />
+          </div>
+          <div className="w-1/2">
+            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
+            <Datetime
+              value={endDate}
+              onChange={(date) => {
+                setEndDate(date as Date);
+                if (date) setFile(null);
+              }}
+              dateFormat="YYYY-MM-DD"
+              timeFormat="HH:mm:ss"
+              inputProps={{ id: "endDate", className: "mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md" }}
+              closeOnSelect
+              disabled={!!file}
+            />
+          </div>
+        </div>
+        {!startDate && !endDate && (
+          <div className="mb-4">
+            <label htmlFor="file" className="block text-sm font-medium text-gray-700">File</label>
+            <input
+              type="file"
+              id="file"
+              onChange={handleFileChange}
+              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+              disabled={!!startDate || !!endDate}
+            />
+          </div>
+        )}
+        <button
           type="submit"
-          fullWidth
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           disabled={!config} // Disable until config is loaded
         >
           Submit
-        </Button>
+        </button>
         {message && (
-          <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+          <p className="mt-2 text-red-600">
             {message}
-          </Typography>
+          </p>
         )}
-      </Box>
-      <Modal
-        open={openErrorModal}
-        onClose={handleCloseErrorModal}
-        aria-labelledby="error-modal-title"
-        aria-describedby="error-modal-description"
-      >
-        <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
-          <Typography id="error-modal-title" variant="h6" component="h2">
-            Error
-          </Typography>
-          <Typography id="error-modal-description" sx={{ mt: 2 }}>
-            {errorMessage}
-          </Typography>
-          <Button onClick={handleCloseErrorModal} sx={{ mt: 2 }}>
-            Close
-          </Button>
-        </Box>
-      </Modal>
-    </Container>
+      </form>
+      {openErrorModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      Error
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        {errorMessage}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={handleCloseErrorModal}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
 export default Home;
-
-
-// // src/app/page.tsx working no datepipcker
-// "use client";
-// import { useState, useEffect } from 'react';
-// import { Container, TextField, Box, Select, MenuItem, FormControl, InputLabel, Button, Typography, Modal } from '@mui/material';
-
-// interface TesterType {
-//   [key: string]: { senderId: number };
-// }
-
-// interface DataType {
-//   [key: string]: { testerType: TesterType[] };
-// }
-
-// interface Config {
-//   hostname: string;
-//   port: number;
-//   serviceName: string;
-//   username: string;
-//   password: string;
-//   dataType: DataType[];
-// }
-
-// const Home = () => {
-//   const [config, setConfig] = useState<Record<string, Config> | null>(null);
-//   const [file, setFile] = useState<File | null>(null);
-//   const [batchSize, setBatchSize] = useState<number | string>('');
-//   const [hostname, setHostname] = useState<string>('');
-//   const [port, setPort] = useState<string>('');
-//   const [serviceName, setServiceName] = useState<string>('');
-//   const [location, setLocation] = useState<string>('');
-//   const [dataType, setDataType] = useState<string>('');
-//   const [testerType, setTesterType] = useState<string>('');
-//   const [message, setMessage] = useState<string>('');
-//   const [openErrorModal, setOpenErrorModal] = useState(false);
-//   const [errorMessage, setErrorMessage] = useState('');
-
-//   useEffect(() => {
-//     const fetchConfig = async () => {
-//       try {
-//         const res = await fetch('/api/config');
-//         if (!res.ok) {
-//           throw new Error('Failed to load configuration.');
-//         }
-//         const data = await res.json();
-//         setConfig(data); // Assuming the structure is { JND: {...}, CZ4: {...} }
-//       } catch (error: any) {
-//         setMessage(error.message || 'An error occurred while fetching the configuration.');
-//       }
-//     };
-
-//     fetchConfig();
-//   }, []);
-
-//   const handleCloseErrorModal = () => setOpenErrorModal(false);
-
-//   const handleLocationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//     const selectedLocation = event.target.value as string;
-//     setLocation(selectedLocation);
-//     if (config && config[selectedLocation]) {
-//       const locationConfig = config[selectedLocation];
-//       setHostname(locationConfig.hostname);
-//       setPort(locationConfig.port.toString());
-//       setServiceName(locationConfig.serviceName);
-//       setDataType('');
-//       setTesterType('');
-//     }
-//   };
-
-//   const handleDataTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//     const selectedDataType = event.target.value as string;
-//     setDataType(selectedDataType);
-//     setTesterType(''); // Reset tester type when data type changes
-//   };
-
-//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const selectedFile = event.target.files?.[0] || null;
-//     setFile(selectedFile);
-//   };
-
-//   const handleSubmit = async (event: React.FormEvent) => {
-//     event.preventDefault();
-
-//     try {
-//       const formData = new FormData();
-//       if (file) {
-//         formData.append('file', file);
-//       }
-//       formData.append('batchSize', batchSize.toString());
-//       formData.append('hostname', hostname);
-//       formData.append('port', port);
-//       formData.append('serviceName', serviceName);
-//       formData.append('location', location);
-//       formData.append('dataType', dataType);
-//       formData.append('testerType', testerType);
-
-//       if (config && location) {
-//         const locationConfig = config[location];
-//         formData.append('username', process.env[locationConfig.username] || '');
-//         formData.append('password', process.env[locationConfig.password] || '');
-//       }
-
-//       const response = await fetch('/api/process-ids', {
-//         method: 'POST',
-//         body: formData,
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Failed to process IDs');
-//       }
-
-//       const result = await response.json();
-//       setMessage(result.message);
-//     } catch (error: any) {
-//       setErrorMessage(error.message || 'An error occurred');
-//       setOpenErrorModal(true);
-//     }
-//   };
-
-//   return (
-//     <Container>
-//       <Box component="form" onSubmit={handleSubmit}>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel id="location-label">Location</InputLabel>
-//           <Select
-//             labelId="location-label"
-//             value={location}
-//             onChange={handleLocationChange}
-//             displayEmpty
-//             label="Location"
-//           >
-//             <MenuItem value="" disabled>
-//               <em>Select a Location</em>
-//             </MenuItem>
-//             {config && Object.keys(config).map((loc) => (
-//               <MenuItem key={loc} value={loc}>
-//                 {loc}
-//               </MenuItem>
-//             ))}
-//           </Select>
-//         </FormControl>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel id="data-type-label">Data Type</InputLabel>
-//           <Select
-//             labelId="data-type-label"
-//             value={dataType}
-//             onChange={handleDataTypeChange}
-//             displayEmpty
-//             label="Data Type"
-//             disabled={!location}
-//           >
-//             <MenuItem value="" disabled>
-//               <em>Select a Data Type</em>
-//             </MenuItem>
-//             {location && config[location]?.dataType?.map((dt) => {
-//               const dataTypeKey = Object.keys(dt)[0];
-//               return (
-//                 <MenuItem key={dataTypeKey} value={dataTypeKey}>
-//                   {dataTypeKey}
-//                 </MenuItem>
-//               );
-//             })}
-//           </Select>
-//         </FormControl>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel id="tester-type-label">Tester Type</InputLabel>
-//           <Select
-//             labelId="tester-type-label"
-//             value={testerType}
-//             onChange={(e) => setTesterType(e.target.value as string)}
-//             displayEmpty
-//             label="Tester Type"
-//             disabled={!dataType || !location}
-//           >
-//             <MenuItem value="" disabled>
-//               <em>Select a Tester Type</em>
-//             </MenuItem>
-//             {location && dataType && config[location]?.dataType?.find((dt) => Object.keys(dt)[0] === dataType)?.[dataType]?.testerType?.map((testerTypeObj) => {
-//               const testerTypeKey = Object.keys(testerTypeObj)[0];
-//               return (
-//                 <MenuItem key={testerTypeKey} value={testerTypeKey}>
-//                   {testerTypeKey}
-//                 </MenuItem>
-//               );
-//             })}
-//           </Select>
-//         </FormControl>
-//         <TextField
-//           fullWidth
-//           label="Batch Size"
-//           value={batchSize}
-//           onChange={(e) => setBatchSize(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Hostname"
-//           value={hostname}
-//           onChange={(e) => setHostname(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Port"
-//           value={port}
-//           onChange={(e) => setPort(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Service Name"
-//           value={serviceName}
-//           onChange={(e) => setServiceName(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <input
-//           type="file"
-//           onChange={handleFileChange}
-//           style={{ marginBottom: '16px' }}
-//         />
-//         <Button
-//           variant="contained"
-//           color="primary"
-//           type="submit"
-//           fullWidth
-//           disabled={!config} // Disable until config is loaded
-//         >
-//           Submit
-//         </Button>
-//         {message && (
-//           <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-//             {message}
-//           </Typography>
-//         )}
-//       </Box>
-//       <Modal
-//         open={openErrorModal}
-//         onClose={handleCloseErrorModal}
-//         aria-labelledby="error-modal-title"
-//         aria-describedby="error-modal-description"
-//       >
-//         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
-//           <Typography id="error-modal-title" variant="h6" component="h2">
-//             Error
-//           </Typography>
-//           <Typography id="error-modal-description" sx={{ mt: 2 }}>
-//             {errorMessage}
-//           </Typography>
-//           <Button onClick={handleCloseErrorModal} sx={{ mt: 2 }}>
-//             Close
-//           </Button>
-//         </Box>
-//       </Modal>
-//     </Container>
-//   );
-// };
-
-// export default Home;
-
-// // src/app/page.tsx  orig
-// "use client";
-// import { useState, useEffect } from 'react';
-// import { Container, TextField, Box, Select, MenuItem, FormControl, InputLabel, Button, Typography, Modal } from '@mui/material';
-// import { Config } from '../types/config';
-
-// const Home = () => {
-//   const [config, setConfig] = useState<Config | null>(null);
-//   const [file, setFile] = useState<File | null>(null);
-//   const [batchSize, setBatchSize] = useState<number | string>('');
-//   const [hostname, setHostname] = useState<string>('');
-//   const [port, setPort] = useState<string>('');
-//   const [serviceName, setServiceName] = useState<string>('');
-//   const [location, setLocation] = useState<string>('');
-//   const [dataType, setDataType] = useState<string>('');
-//   const [testerType, setTesterType] = useState<string>('');
-//   const [message, setMessage] = useState<string>('');
-//   const [openErrorModal, setOpenErrorModal] = useState(false);
-//   const [errorMessage, setErrorMessage] = useState('');
-
-//   useEffect(() => {
-//     const fetchConfig = async () => {
-//       try {
-//         const res = await fetch('/api/config');
-//         if (!res.ok) {
-//           throw new Error('Failed to load configuration.');
-//         }
-//         const data: Config = await res.json();
-//         setConfig(data);
-//       } catch (error: any) {
-//         setMessage(error.message || 'An error occurred while fetching the configuration.');
-//       }
-//     };
-
-//     fetchConfig();
-//   }, []);
-
-//   const handleCloseErrorModal = () => setOpenErrorModal(false);
-
-//   const handleLocationChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//     const selectedLocation = event.target.value as string;
-//     console.log('Selected Location:', selectedLocation);
-//     setLocation(selectedLocation);
-//     if (config) {
-//       setHostname(config[selectedLocation].hostname);
-//       setPort(config[selectedLocation].port.toString());
-//       setServiceName(config[selectedLocation].serviceName);
-//       setDataType('');
-//       setTesterType('');
-//     }
-//   };
-
-//   const handleDataTypeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-//     const selectedDataType = event.target.value as string;
-//     console.log('Selected Data Type:', selectedDataType);
-//     setDataType(selectedDataType);
-//     setTesterType(''); // Reset tester type when data type changes
-//   };
-
-//   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-//     const selectedFile = event.target.files?.[0] || null;
-//     setFile(selectedFile);
-//   };
-
-//   const handleSubmit = async (event: React.FormEvent) => {
-//     event.preventDefault();
-
-//     try {
-//       const formData = new FormData();
-//       if (file) {
-//         formData.append('file', file);
-//       }
-//       formData.append('batchSize', batchSize.toString());
-//       formData.append('hostname', hostname);
-//       formData.append('port', port);
-//       formData.append('serviceName', serviceName);
-//       formData.append('location', location);
-//       formData.append('dataType', dataType);
-//       formData.append('testerType', testerType);
-
-//       // Add username and password to the request
-//       formData.append('username', config?.username || '');
-//       formData.append('password', config?.password || '');
-
-//       const response = await fetch('/api/process-ids', {
-//         method: 'POST',
-//         body: formData,
-//       });
-
-//       if (!response.ok) {
-//         throw new Error('Failed to process IDs');
-//       }
-
-//       const result = await response.json();
-//       setMessage(result.message);
-//     } catch (error: any) {
-//       setErrorMessage(error.message || 'An error occurred');
-//       setOpenErrorModal(true);
-//     }
-//   };
-
-//   return (
-//     <Container>
-//       <Box component="form" onSubmit={handleSubmit}>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel id="location-label">Location</InputLabel>
-//           <Select
-//             labelId="location-label"
-//             value={location}
-//             onChange={handleLocationChange}
-//             displayEmpty
-//           >
-//             <MenuItem value="" disabled>
-             
-//             </MenuItem>
-//             {config && Object.keys(config).map((loc) => (
-//               <MenuItem key={loc} value={loc}>
-//                 {loc}
-//               </MenuItem>
-//             ))}
-//           </Select>
-//         </FormControl>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel id="data-type-label">Data Type</InputLabel>
-//           <Select
-//             value={dataType}
-//             onChange={handleDataTypeChange}
-//             displayEmpty
-//             disabled={!location}
-//           >
-//             <MenuItem value="" disabled>
-              
-//             </MenuItem>
-//             {location && config[location]?.dataType.map((dt: any) => {
-//               const dataTypeKey = Object.keys(dt)[0];
-//               return (
-//                 <MenuItem key={dataTypeKey} value={dataTypeKey}>
-//                   {dataTypeKey}
-//                 </MenuItem>
-//               );
-//             })}
-//           </Select>
-//         </FormControl>
-//         <FormControl fullWidth sx={{ mb: 2 }}>
-//           <InputLabel>Tester Type</InputLabel>
-//           <Select
-//             value={testerType}
-//             onChange={(e) => setTesterType(e.target.value as string)}
-//             displayEmpty
-//             disabled={!dataType || !location}
-//           >
-//             <MenuItem value="" disabled>
-              
-//             </MenuItem>
-//             {location && dataType && config[location].dataType.find((dt: any) => Object.keys(dt)[0] === dataType)?.[dataType]?.testerType.map((testerTypeObj: any) => {
-//               const testerTypeKey = Object.keys(testerTypeObj)[0];
-//               return (
-//                 <MenuItem key={testerTypeKey} value={testerTypeKey}>
-//                   {testerTypeKey}
-//                 </MenuItem>
-//               );
-//             })}
-//           </Select>
-//         </FormControl>
-//         <TextField
-//           fullWidth
-//           label="Batch Size"
-//           value={batchSize}
-//           onChange={(e) => setBatchSize(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Hostname"
-//           value={hostname}
-//           onChange={(e) => setHostname(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Port"
-//           value={port}
-//           onChange={(e) => setPort(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <TextField
-//           fullWidth
-//           label="Service Name"
-//           value={serviceName}
-//           onChange={(e) => setServiceName(e.target.value)}
-//           sx={{ mb: 2 }}
-//         />
-//         <input
-//           type="file"
-//           onChange={handleFileChange}
-//           style={{ marginBottom: '16px' }}
-//         />
-//         <Button
-//           variant="contained"
-//           color="primary"
-//           type="submit"
-//           fullWidth
-//           disabled={!config} // Disable until config is loaded
-//         >
-//           Submit
-//         </Button>
-//         {message && (
-//           <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-//             {message}
-//           </Typography>
-//         )}
-//       </Box>
-//       <Modal
-//         open={openErrorModal}
-//         onClose={handleCloseErrorModal}
-//         aria-labelledby="error-modal-title"
-//         aria-describedby="error-modal-description"
-//       >
-//         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
-//           <Typography id="error-modal-title" variant="h6" component="h2">
-//             Error
-//           </Typography>
-//           <Typography id="error-modal-description" sx={{ mt: 2 }}>
-//             {errorMessage}
-//           </Typography>
-//           <Button onClick={handleCloseErrorModal} sx={{ mt: 2 }}>
-//             Close
-//           </Button>
-//         </Box>
-//       </Modal>
-//     </Container>
-//   );
-// };
-
-// export default Home;
