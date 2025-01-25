@@ -77,6 +77,104 @@ export const processIdsInBatches = async (
   }
 };
 
+// New function to insert data based on a datetime range
+
+export const insertFromDateRange = async (
+
+  connection: oracledb.Connection,
+
+  startDate: string,
+
+  endDate: string,
+
+  location: string,
+
+  dataType: string,
+
+  testerType: string
+
+) => {
+
+  // Retrieve senderId from the configuration
+
+  const senderId = config[location]?.dataType?.find((dt: any) => dt[dataType])?.[dataType]?.testerType?.find((tt: any) => tt[testerType])?.[testerType]?.senderId;
+
+  if (!senderId) {
+
+    throw new Error(`Sender ID not found for location: ${location}, dataType: ${dataType}, testerType: ${testerType}`);
+
+  }
+
+  const sql = `
+
+    INSERT INTO DTP_SENDER_QUEUE_ITEM (id, id_metadata, id_data, id_sender, record_created)
+
+    SELECT 
+
+      DTP_SENDER_QUEUE_ITEM_SEQ.NEXTVAL,
+
+      m.id,
+
+      m.id_data,
+
+      :senderId,
+
+      SYSDATE
+
+    FROM 
+
+      all_metadata_view m
+
+    WHERE  
+
+      m.location = :location AND
+
+      m.data_type = :dataType AND
+
+      m.tester_type = :testerType AND
+
+      m.record_datetime BETWEEN TO_DATE(:startDate, 'YYYY-MM-DD HH24:MI:SS') 
+
+                             AND TO_DATE(:endDate, 'YYYY-MM-DD HH24:MI:SS')
+
+  `;
+
+  const binds = {
+
+    location,
+
+    dataType,
+
+    testerType,
+
+    senderId,
+
+    startDate,
+
+    endDate,
+
+  };
+
+  try {
+
+    const result = await connection.execute(sql, binds);
+
+    await connection.commit();
+
+    console.log(`Inserted data from date range: ${startDate} to ${endDate}`);
+
+    return result;
+
+  } catch (error) {
+
+    console.error('Error inserting data from date range:', error);
+
+    throw error;
+
+  }
+
+};
+
 // import oracledb from 'oracledb';
 // import fs from 'fs';
 // import { promisify } from 'util';
