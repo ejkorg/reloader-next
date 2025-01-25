@@ -17,12 +17,10 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB limit
   fileFilter: (req, file, cb) => {
     const allowedExtensions = /\.(txt|csv|lot)$/;
-    // const allowedMimeTypes = ['text/plain', 'text/csv'];
     const allowedMimeTypes = ['text/plain', 'text/csv', 'application/octet-stream'];
     const extname = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedMimeTypes.includes(file.mimetype);
     logger.info(`File upload attempt: originalname=${file.originalname}, extname=${path.extname(file.originalname).toLowerCase()}, mimetype=${file.mimetype}`);
-    logger.info(`File MIME type: ${file.mimetype}`);
     if (extname && mimetype) {
       return cb(null, true);
     } else {
@@ -66,20 +64,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let connection;
 
     try {
-      // Fetch configuration from the config API
-      const configResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/config`);
-      if (!configResponse.ok) {
-        throw new Error('Failed to fetch configuration');
-      }
-      const config = await configResponse.json();
+      const config = await fetchConfig();
+      const locationConfig = getLocationConfig(config, location);
 
-      const locationConfig = config[location];
-      if (!locationConfig) {
-        throw new Error(`No configuration found for location: ${location}`);
-      }
-
-      const username = process.env[locationConfig.username] || '';
-      const password = process.env[locationConfig.password] || '';
+      const { username, password } = getCredentials(location);
 
       logger.info('Attempting to connect to the Oracle database...');
       connection = await oracledb.getConnection({
@@ -110,4 +98,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
   });
+}
+
+async function fetchConfig() {
+  const configResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/config`);
+  if (!configResponse.ok) {
+    throw new Error('Failed to fetch configuration');
+  }
+  return configResponse.json();
+}
+
+function getLocationConfig(config: any, location: string) {
+  const locationConfig = config[location];
+  if (!locationConfig) {
+    throw new Error(`No configuration found for location: ${location}`);
+  }
+  return locationConfig;
+}
+
+function getCredentials(location: string) {
+  const usernameEnvVar = `${location.toUpperCase()}_DB_USERNAME`;
+  const passwordEnvVar = `${location.toUpperCase()}_DB_PASSWORD`;
+
+  const username = process.env[usernameEnvVar] || '';
+  const password = process.env[passwordEnvVar] || '';
+
+  if (!username || !password) {
+    throw new Error(`Database credentials not found for location: ${location}`);
+  }
+
+  return { username, password };
 }

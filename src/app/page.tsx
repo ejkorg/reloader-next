@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Datetime from 'react-datetime';
+import moment from 'moment';
 import "react-datetime/css/react-datetime.css";
 
 // Define types directly in this file
@@ -34,8 +35,8 @@ const Home = () => {
   const [message, setMessage] = useState<string>('');
   const [openErrorModal, setOpenErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<moment.Moment | null>(null);
+  const [endDate, setEndDate] = useState<moment.Moment | null>(null);
 
   useEffect(() => {
     const fetchConfig = async () => {
@@ -87,6 +88,14 @@ const Home = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    // Debugging: Log the current state of startDate and endDate
+    console.log('Submitting form with startDate:', startDate, 'endDate:', endDate);
+    if (!file && (!startDate || !endDate)) {
+      setErrorMessage('Please provide either a file or a valid date range.');
+      setOpenErrorModal(true);
+      return;
+    }
+
     try {
       const formData = new FormData();
       if (file) {
@@ -113,12 +122,15 @@ const Home = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to process request');
+        const errorText = await response.text();
+        console.error(`Error: ${response.status} - ${errorText}`);
+        throw new Error(`Failed to process request: ${errorText}`);
       }
 
       const result = await response.json();
       setMessage(result.message);
     } catch (error: any) {
+      console.error('Error during fetch:', error);
       setErrorMessage(error.message || 'An error occurred');
       setOpenErrorModal(true);
     }
@@ -226,7 +238,7 @@ const Home = () => {
               <Datetime
                 value={startDate}
                 onChange={(date) => {
-                  setStartDate(date as Date);
+                  setStartDate(date as moment.Moment);
                   if (date) setFile(null);
                 }}
                 dateFormat="YYYY-MM-DD"
@@ -241,7 +253,7 @@ const Home = () => {
               <Datetime
                 value={endDate}
                 onChange={(date) => {
-                  setEndDate(date as Date);
+                  setEndDate(date as moment.Moment);
                   if (date) setFile(null);
                 }}
                 dateFormat="YYYY-MM-DD"
