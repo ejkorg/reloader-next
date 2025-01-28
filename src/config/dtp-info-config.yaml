@@ -1,32 +1,17 @@
 
-# src/config/dtp-info-config.yaml
-# locations:
-#   JND:
-#     hostname: jnd-proddb-scan.onsemi.com
-#     port: 1540
-#     serviceName: JNDMFGP.onsemi.com
-#     username: JND_USERNAME_ENV
-#     password: JND_PASSWORD_ENV
-#   CZ4:
-#     hostname: cz4-proddb-scan.onsemi.com
-#     port: 1540
-#     serviceName: CZ4MFGP.onsemi.com
-#     username: CZ4_USERNAME_ENV
-#     password: CZ4_PASSWORD_ENV
-# # src/config/config.yaml
 JND:
-  hostname: jndhostname
-  port: 1521
-  serviceName: jndservicename
-  username: JND_USERNAME_ENV
-  password: JND_PASSWORD_ENV
+  hostname: jnd-devdb-scan.onsemi.com #jnd-proddb-scan
+  port: 1537 #1540
+  serviceName: JNDMFGQ.onsemi.com #JNDMFGP.onsemi.com
+  username: DATAPORT_USER
+  password: Aizu1234
   dataType:
     - Probe:
         testerType:
           - TESEC:
-              senderId: 81
+              senderId: 62 #81
           - TERAPROBE:
-             senderId: 83
+             senderId: 13 #83
     - FinalTest:
         testerType:
           - A1:

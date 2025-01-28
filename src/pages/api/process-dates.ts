@@ -4,6 +4,10 @@ import { insertFromDateRange } from '../../utils/db-utils';
 import logger from '@/lib/logger';
 import dotenv from 'dotenv';
 import { IncomingForm } from 'formidable';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
+
 
 // Load environment variables
 dotenv.config();
@@ -86,6 +90,12 @@ async function fetchConfig() {
   return configResponse.json();
 }
 
+// async function fetchConfig() {
+//   const filePath = path.join(process.cwd(), 'src/config/dtp-info-config.yaml');
+//   const fileContents = fs.readFileSync(filePath, 'utf8');
+//   return yaml.load(fileContents);
+// }
+
 function getLocationConfig(config: any, location: string) {
   const locationConfig = config[location];
   if (!locationConfig) {
@@ -94,15 +104,15 @@ function getLocationConfig(config: any, location: string) {
   return locationConfig;
 }
 
-function getCredentials(locationConfig: any) {
-  const usernameEnvVar = `${locationConfig.username.toUpperCase()}_DB_USERNAME`;
-  const passwordEnvVar = `${locationConfig.username.toUpperCase()}_DB_PASSWORD`;
+function getCredentials(location: string) {
+  const usernameEnvVar = `${location}_DB_USERNAME`;
+  const passwordEnvVar = `${location}_DB_PASSWORD`;
 
   const username = process.env[usernameEnvVar] || '';
   const password = process.env[passwordEnvVar] || '';
 
   if (!username || !password) {
-    throw new Error(`Database credentials not found for location: ${locationConfig.username}`);
+    throw new Error(`Database credentials not found for location: ${location} and username: ${username}`);
   }
 
   return { username, password };
